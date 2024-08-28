@@ -77,6 +77,12 @@ body {
     height: 17em;
   }
 }
+#infoDump{
+  margin-top: 20px;
+  padding: 10px;
+  border: 3px solid rgb(233, 127, 136);
+  border-radius: 5px;
+}
 
 
 /*# sourceMappingURL=/styles.8986bff4.css.map */

@@ -23343,7 +23343,6 @@ var infoDump = document.getElementById("infoDump");
 var progressBar = document.getElementById("progressBar");
 // The get favourites button element.
 var getFavouritesBtn = document.getElementById("getFavouritesBtn");
-var carousel = document.querySelector("#carouselInner");
 
 // Step 0: Store your API key here for reference and easy access.
 var API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7m0eWQ4";
@@ -23388,7 +23387,6 @@ function _initialLoad() {
   return _initialLoad.apply(this, arguments);
 }
 initialLoad();
-// createCarouselItem();     
 
 /**
  * 2. Create an event handler for breedSelect that does the following:
@@ -23431,7 +23429,7 @@ function _handleBreedSelect() {
           images = _context2.sent;
           (0, _Carousel.clear)();
           images.forEach(function (image) {
-            var carouselItem = Carousel.createCarouselItem(image.url, "Image of breed ".concat(breedId), image.id);
+            var carouselItem = (0, _Carousel.createCarouselItem)(image.url, "Image of breed ".concat(breedId), image.id);
             (0, _Carousel.appendCarousel)(carouselItem);
           });
           (0, _Carousel.start)();
@@ -23449,7 +23447,7 @@ function _handleBreedSelect() {
         case 22:
           _context2.prev = 22;
           _context2.t0 = _context2["catch"](3);
-          console.error('Error fetching breed images or info:', _context2.t0);
+          console.error(_context2.t0);
         case 25:
         case "end":
           return _context2.stop();
@@ -23458,7 +23456,7 @@ function _handleBreedSelect() {
   }));
   return _handleBreedSelect.apply(this, arguments);
 }
-document.getElementById('breedSelect').addEventListener('change', handleBreedSelect);
+breedSelect.addEventListener('change', handleBreedSelect);
 
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
