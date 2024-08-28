@@ -50,24 +50,68 @@ const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
 
-async function handleBreedSelect(event) {
+// async function handleBreedSelect(event) {
+//   const breedId = event.target.value;
+//   if (!breedId) return; 
+//   try {
+//     const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
+//     const images = await response.json();
+
+//     clear();
+
+//     images.forEach(image => {
+//       const carouselItem = createCarouselItem(image.url,`Image of breed ${breedId}`, image.id)
+//       appendCarousel(carouselItem)
+//     });
+
+//     start();
+
+//     const breedResponse = await fetch(`https://api.thecatapi.com/v1/breeds/${breedId}`);
+//     const breed = await breedResponse.json();
+
+//     infoDump.innerHTML = `
+//       <h2>${breed.name}</h2>
+//       <p>${breed.description}</p>
+//       <p><strong>Origin:</strong> ${breed.origin}</p>
+//       <p><strong>Temperament:</strong> ${breed.temperament}</p>
+//       <p><strong>Life Span:</strong> ${breed.life_span} years</p>
+//     `;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// breedSelect.addEventListener('change', handleBreedSelect);
+
+
+//4 Within this additional file, change all of your fetch() functions to Axios!
+
+async function imagesAlternative(event) {
   const breedId = event.target.value;
+  const infoDump = document.getElementById('infoDump'); 
+
   if (!breedId) return; 
+
   try {
-    const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
-    const images = await response.json();
+    const response = await axios.get(`https://api.thecatapi.com/v1/images/search`, {
+      params: {
+        breed_ids: breedId,
+        limit: 5
+      }
+    });
+    const images = response.data; 
 
     clear();
 
     images.forEach(image => {
-      const carouselItem = createCarouselItem(image.url,`Image of breed ${breedId}`, image.id)
-      appendCarousel(carouselItem)
+      const carouselItem = createCarouselItem(image.url, `Image of breed ${breedId}`, image.id);
+      appendCarousel(carouselItem);
     });
 
     start();
 
-    const breedResponse = await fetch(`https://api.thecatapi.com/v1/breeds/${breedId}`);
-    const breed = await breedResponse.json();
+    const breedResponse = await axios.get(`https://api.thecatapi.com/v1/breeds/${breedId}`);
+    const breed = breedResponse.data; 
 
     infoDump.innerHTML = `
       <h2>${breed.name}</h2>
@@ -81,27 +125,32 @@ async function handleBreedSelect(event) {
   }
 }
 
-breedSelect.addEventListener('change', handleBreedSelect);
+document.getElementById('breedSelect').addEventListener('change', imagesAlternative);
 
 
-/**
- * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
- */
-/**
- * 4. Change all of your fetch() functions to axios!
- * - axios has already been imported for you within index.js.
- * - If you've done everything correctly up to this point, this should be simple.
- * - If it is not simple, take a moment to re-evaluate your original code.
- * - Hint: Axios has the ability to set default headers. Use this to your advantage
- *   by setting a default header with your API key so that you do not have to
- *   send it manually with all of your requests! You can also set a default base URL!
- */
-/**
- * 5. Add axios interceptors to log the time between request and response to the console.
+/* * 5. Add axios interceptors to log the time between request and response to the console.
  * - Hint: you already have access to code that does this!
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
+axios.interceptors.request.use(request => {
+  request.meta = {startTime: new Date()};
+  return request;
+});
+
+axios.interceptors.response.use(
+  (response) => {
+      const endTime = new Date();
+      const duration = endTime - response.config.meta.startTime;
+      console.log(`Request to ${response.config.url} took ${duration}ms`);
+      return response;
+  },
+  (error) => {
+      const endTime = new Date();
+      const duration = endTime - error.config.meta.startTime;
+      console.log(`Request to ${error.config.url} failed after ${duration}ms`)
+      return Promise.reject(error)
+});
 
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.

@@ -23402,80 +23402,119 @@ initialLoad();
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
-function handleBreedSelect(_x) {
-  return _handleBreedSelect.apply(this, arguments);
+
+// async function handleBreedSelect(event) {
+//   const breedId = event.target.value;
+//   if (!breedId) return; 
+//   try {
+//     const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
+//     const images = await response.json();
+
+//     clear();
+
+//     images.forEach(image => {
+//       const carouselItem = createCarouselItem(image.url,`Image of breed ${breedId}`, image.id)
+//       appendCarousel(carouselItem)
+//     });
+
+//     start();
+
+//     const breedResponse = await fetch(`https://api.thecatapi.com/v1/breeds/${breedId}`);
+//     const breed = await breedResponse.json();
+
+//     infoDump.innerHTML = `
+//       <h2>${breed.name}</h2>
+//       <p>${breed.description}</p>
+//       <p><strong>Origin:</strong> ${breed.origin}</p>
+//       <p><strong>Temperament:</strong> ${breed.temperament}</p>
+//       <p><strong>Life Span:</strong> ${breed.life_span} years</p>
+//     `;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// breedSelect.addEventListener('change', handleBreedSelect);
+
+//4 Within this additional file, change all of your fetch() functions to Axios!
+function imagesAlternative(_x) {
+  return _imagesAlternative.apply(this, arguments);
 }
-function _handleBreedSelect() {
-  _handleBreedSelect = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
-    var breedId, response, images, breedResponse, breed;
+function _imagesAlternative() {
+  _imagesAlternative = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
+    var breedId, infoDump, response, images, breedResponse, breed;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           breedId = event.target.value;
+          infoDump = document.getElementById('infoDump');
           if (breedId) {
-            _context2.next = 3;
+            _context2.next = 4;
             break;
           }
           return _context2.abrupt("return");
-        case 3:
-          _context2.prev = 3;
-          _context2.next = 6;
-          return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(breedId, "&limit=5"));
-        case 6:
+        case 4:
+          _context2.prev = 4;
+          _context2.next = 7;
+          return _axios.default.get("https://api.thecatapi.com/v1/images/search", {
+            params: {
+              breed_ids: breedId,
+              limit: 5
+            }
+          });
+        case 7:
           response = _context2.sent;
-          _context2.next = 9;
-          return response.json();
-        case 9:
-          images = _context2.sent;
+          images = response.data;
           (0, _Carousel.clear)();
           images.forEach(function (image) {
             var carouselItem = (0, _Carousel.createCarouselItem)(image.url, "Image of breed ".concat(breedId), image.id);
             (0, _Carousel.appendCarousel)(carouselItem);
           });
           (0, _Carousel.start)();
-          _context2.next = 15;
-          return fetch("https://api.thecatapi.com/v1/breeds/".concat(breedId));
-        case 15:
+          _context2.next = 14;
+          return _axios.default.get("https://api.thecatapi.com/v1/breeds/".concat(breedId));
+        case 14:
           breedResponse = _context2.sent;
-          _context2.next = 18;
-          return breedResponse.json();
-        case 18:
-          breed = _context2.sent;
+          breed = breedResponse.data;
           infoDump.innerHTML = "\n      <h2>".concat(breed.name, "</h2>\n      <p>").concat(breed.description, "</p>\n      <p><strong>Origin:</strong> ").concat(breed.origin, "</p>\n      <p><strong>Temperament:</strong> ").concat(breed.temperament, "</p>\n      <p><strong>Life Span:</strong> ").concat(breed.life_span, " years</p>\n    ");
-          _context2.next = 25;
+          _context2.next = 22;
           break;
-        case 22:
-          _context2.prev = 22;
-          _context2.t0 = _context2["catch"](3);
+        case 19:
+          _context2.prev = 19;
+          _context2.t0 = _context2["catch"](4);
           console.error(_context2.t0);
-        case 25:
+        case 22:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[3, 22]]);
+    }, _callee2, null, [[4, 19]]);
   }));
-  return _handleBreedSelect.apply(this, arguments);
+  return _imagesAlternative.apply(this, arguments);
 }
-breedSelect.addEventListener('change', handleBreedSelect);
+document.getElementById('breedSelect').addEventListener('change', imagesAlternative);
 
-/**
- * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
- */
-/**
- * 4. Change all of your fetch() functions to axios!
- * - axios has already been imported for you within index.js.
- * - If you've done everything correctly up to this point, this should be simple.
- * - If it is not simple, take a moment to re-evaluate your original code.
- * - Hint: Axios has the ability to set default headers. Use this to your advantage
- *   by setting a default header with your API key so that you do not have to
- *   send it manually with all of your requests! You can also set a default base URL!
- */
-/**
- * 5. Add axios interceptors to log the time between request and response to the console.
+/* * 5. Add axios interceptors to log the time between request and response to the console.
  * - Hint: you already have access to code that does this!
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
+_axios.default.interceptors.request.use(function (request) {
+  request.meta = {
+    startTime: new Date()
+  };
+  return request;
+});
+_axios.default.interceptors.response.use(function (response) {
+  var endTime = new Date();
+  var duration = endTime - response.config.meta.startTime;
+  console.log("Request to ".concat(response.config.url, " took ").concat(duration, "ms"));
+  return response;
+}, function (error) {
+  var endTime = new Date();
+  var duration = endTime - error.config.meta.startTime;
+  console.log("Request to ".concat(error.config.url, " failed after ").concat(duration, "ms"));
+  return Promise.reject(error);
+});
 
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
