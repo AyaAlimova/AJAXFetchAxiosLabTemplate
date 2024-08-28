@@ -1,4 +1,6 @@
+import { error } from "jquery";
 import * as Carousel from "./Carousel.js";
+import { createCarouselItem, clear, appendCarousel, start } from './Carousel.js';
 import axios from "axios";
 
 // The breed selection input element.
@@ -9,6 +11,7 @@ const infoDump = document.getElementById("infoDump");
 const progressBar = document.getElementById("progressBar");
 // The get favourites button element.
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
+const carousel = document.querySelector("#carouselInner");
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7m0eWQ4";
@@ -32,7 +35,7 @@ const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7
      });
   }
   initialLoad();
-     
+ // createCarouselItem();     
   
 /**
  * 2. Create an event handler for breedSelect that does the following:
@@ -48,6 +51,43 @@ const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
+
+
+async function handleBreedSelect(event) {
+  const breedId = event.target.value;
+  if (!breedId) return; 
+  try {
+    const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
+    const images = await response.json();
+
+    clear();
+
+    images.forEach(image => {
+      const carouselItem = Carousel.createCarouselItem(image.url,`Image of breed ${breedId}`, image.id)
+      appendCarousel(carouselItem)
+    });
+
+    start();
+
+    const breedResponse = await fetch(`https://api.thecatapi.com/v1/breeds/${breedId}`);
+    const breed = await breedResponse.json();
+
+    infoDump.innerHTML = `
+      <h2>${breed.name}</h2>
+      <p>${breed.description}</p>
+      <p><strong>Origin:</strong> ${breed.origin}</p>
+      <p><strong>Temperament:</strong> ${breed.temperament}</p>
+      <p><strong>Life Span:</strong> ${breed.life_span} years</p>
+    `;
+  } catch (error) {
+    console.error('Error fetching breed images or info:', error);
+  }
+}
+
+document.getElementById('breedSelect').addEventListener('change', handleBreedSelect);
+
+
+
 
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
