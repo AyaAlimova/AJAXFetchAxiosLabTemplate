@@ -1,5 +1,5 @@
 import { error } from "jquery";
-import * as Carousel from "./Carousel.js";
+//import * as Carousel from "./Carousel.js";
 import { createCarouselItem, clear, appendCarousel, start } from './Carousel.js';
 import axios from "axios";
 
@@ -133,13 +133,23 @@ document.getElementById('breedSelect').addEventListener('change', imagesAlternat
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
+function resetProgressBar(){
+  progressBar.style.width = '0%'
+}
+
+function updateProgressBar(percentage){
+  progressBar.style.width = `${percentage}%`
+}
+
 axios.interceptors.request.use(request => {
+  resetProgressBar();
   request.meta = {startTime: new Date()};
   return request;
 });
 
 axios.interceptors.response.use(
   (response) => {
+    updateProgressBar(100);
       const endTime = new Date();
       const duration = endTime - response.config.meta.startTime;
       console.log(`Request to ${response.config.url} took ${duration}ms`);
