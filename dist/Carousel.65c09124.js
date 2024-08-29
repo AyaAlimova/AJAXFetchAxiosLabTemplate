@@ -23324,6 +23324,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.favourite = favourite;
+exports.imagesAlternative = imagesAlternative;
 var _jquery = require("jquery");
 var _Carousel = require("./Carousel.js");
 var _axios = _interopRequireDefault(require("axios"));
@@ -23439,27 +23440,27 @@ function imagesAlternative(_x) {
 }
 function _imagesAlternative() {
   _imagesAlternative = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
-    var breedId, infoDump, response, images, breedResponse, breed;
+    var breedId, response, images, breedResponse, breed;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           breedId = event.target.value;
-          infoDump = document.getElementById('infoDump');
           if (breedId) {
-            _context2.next = 4;
+            _context2.next = 3;
             break;
           }
           return _context2.abrupt("return");
-        case 4:
-          _context2.prev = 4;
-          _context2.next = 7;
+        case 3:
+          _context2.prev = 3;
+          _context2.next = 6;
           return _axios.default.get("https://api.thecatapi.com/v1/images/search", {
             params: {
               breed_ids: breedId,
               limit: 5
-            }
+            },
+            onDownloadProgress: updateProgressBar()
           });
-        case 7:
+        case 6:
           response = _context2.sent;
           images = response.data;
           (0, _Carousel.clear)();
@@ -23468,23 +23469,23 @@ function _imagesAlternative() {
             (0, _Carousel.appendCarousel)(carouselItem);
           });
           (0, _Carousel.start)();
-          _context2.next = 14;
+          _context2.next = 13;
           return _axios.default.get("https://api.thecatapi.com/v1/breeds/".concat(breedId));
-        case 14:
+        case 13:
           breedResponse = _context2.sent;
           breed = breedResponse.data;
           infoDump.innerHTML = "\n      <h2>".concat(breed.name, "</h2>\n      <p>").concat(breed.description, "</p>\n      <p><strong>Origin:</strong> ").concat(breed.origin, "</p>\n      <p><strong>Temperament:</strong> ").concat(breed.temperament, "</p>\n      <p><strong>Life Span:</strong> ").concat(breed.life_span, " years</p>\n    ");
-          _context2.next = 22;
+          _context2.next = 21;
           break;
-        case 19:
-          _context2.prev = 19;
-          _context2.t0 = _context2["catch"](4);
+        case 18:
+          _context2.prev = 18;
+          _context2.t0 = _context2["catch"](3);
           console.error(_context2.t0);
-        case 22:
+        case 21:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[4, 19]]);
+    }, _callee2, null, [[3, 18]]);
   }));
   return _imagesAlternative.apply(this, arguments);
 }
@@ -23495,24 +23496,22 @@ document.getElementById('breedSelect').addEventListener('change', imagesAlternat
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
-function resetProgressBar() {
-  progressBar.style.width = '0%';
-}
-function updateProgressBar(percentage) {
-  progressBar.style.width = "".concat(percentage, "%");
-}
 _axios.default.interceptors.request.use(function (request) {
-  resetProgressBar();
+  progressBar.style.width = '0%';
   request.meta = {
     startTime: new Date()
   };
+  document.body.style.cursor = 'progress';
   return request;
+}, function (error) {
+  return Promise.reject(error);
 });
 _axios.default.interceptors.response.use(function (response) {
   updateProgressBar(100);
   var endTime = new Date();
   var duration = endTime - response.config.meta.startTime;
   console.log("Request to ".concat(response.config.url, " took ").concat(duration, "ms"));
+  document.body.style.cursor = 'default';
   return response;
 }, function (error) {
   var endTime = new Date();
@@ -23520,6 +23519,9 @@ _axios.default.interceptors.response.use(function (response) {
   console.log("Request to ".concat(error.config.url, " failed after ").concat(duration, "ms"));
   return Promise.reject(error);
 });
+function updateProgressBar(percentage) {
+  progressBar.style.width = "".concat(percentage, "%");
+}
 
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
@@ -23678,7 +23680,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49358" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52140" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

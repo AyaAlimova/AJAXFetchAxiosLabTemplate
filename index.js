@@ -86,9 +86,8 @@ const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7
 
 //4 Within this additional file, change all of your fetch() functions to Axios!
 
-async function imagesAlternative(event) {
+export async function imagesAlternative(event) {
   const breedId = event.target.value;
-  const infoDump = document.getElementById('infoDump'); 
 
   if (!breedId) return; 
 
@@ -97,7 +96,8 @@ async function imagesAlternative(event) {
       params: {
         breed_ids: breedId,
         limit: 5
-      }
+      },
+      onDownloadProgress:updateProgressBar()
     });
     const images = response.data; 
 
@@ -133,26 +133,23 @@ document.getElementById('breedSelect').addEventListener('change', imagesAlternat
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
-function resetProgressBar(){
-  progressBar.style.width = '0%'
-}
-
-function updateProgressBar(percentage){
-  progressBar.style.width = `${percentage}%`
-}
-
 axios.interceptors.request.use(request => {
-  resetProgressBar();
+  progressBar.style.width = '0%'
   request.meta = {startTime: new Date()};
+  document.body.style.cursor = 'progress'
   return request;
+}, error => {
+   return Promise.reject(error)
 });
 
 axios.interceptors.response.use(
   (response) => {
-    updateProgressBar(100);
+    updateProgressBar(100)
+
       const endTime = new Date();
       const duration = endTime - response.config.meta.startTime;
       console.log(`Request to ${response.config.url} took ${duration}ms`);
+      document.body.style.cursor = 'default';
       return response;
   },
   (error) => {
@@ -161,6 +158,14 @@ axios.interceptors.response.use(
       console.log(`Request to ${error.config.url} failed after ${duration}ms`)
       return Promise.reject(error)
 });
+
+function updateProgressBar(percentage){
+  progressBar.style.width = `${percentage}%`
+  }
+
+
+
+
 
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
