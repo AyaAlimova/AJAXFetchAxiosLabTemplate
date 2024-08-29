@@ -254,16 +254,20 @@ export async function favourite(imgId) {
         }
       });
       const favourites = response.data;
-      console.log('Your favourites:', favourites);
-      return favourites;
+      clear();
+      console.log(favourites)
+      favourites.forEach(favourite => {
+        const carouselItem = createCarouselItem(favourite.image.url, 'Favorite Cat Image', favourite.id);
+        appendCarousel(carouselItem)
+      });
+      start();
     }
     catch(error){
       console.error('Error getting favourites', error)
-      return[];
     }
+    
   }
   getFavouritesBtn.addEventListener('click', async ()=>{
-    clear();
     const favourites = await getFavourites();
   }) 
 

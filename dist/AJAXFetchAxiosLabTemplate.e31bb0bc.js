@@ -23715,18 +23715,24 @@ function _getFavourites() {
         case 3:
           response = _context5.sent;
           favourites = response.data;
-          console.log('Your favourites:', favourites);
-          return _context5.abrupt("return", favourites);
-        case 9:
-          _context5.prev = 9;
+          (0, _Carousel.clear)();
+          console.log(favourites);
+          favourites.forEach(function (favourite) {
+            var carouselItem = (0, _Carousel.createCarouselItem)(favourite.image.url, 'Favorite Cat Image', favourite.id);
+            (0, _Carousel.appendCarousel)(carouselItem);
+          });
+          (0, _Carousel.start)();
+          _context5.next = 14;
+          break;
+        case 11:
+          _context5.prev = 11;
           _context5.t0 = _context5["catch"](0);
           console.error('Error getting favourites', _context5.t0);
-          return _context5.abrupt("return", []);
-        case 13:
+        case 14:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 9]]);
+    }, _callee5, null, [[0, 11]]);
   }));
   return _getFavourites.apply(this, arguments);
 }
@@ -23735,12 +23741,11 @@ getFavouritesBtn.addEventListener('click', /*#__PURE__*/_asyncToGenerator( /*#__
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) switch (_context.prev = _context.next) {
       case 0:
-        (0, _Carousel.clear)();
-        _context.next = 3;
+        _context.next = 2;
         return getFavourites();
-      case 3:
+      case 2:
         favourites = _context.sent;
-      case 4:
+      case 3:
       case "end":
         return _context.stop();
     }
