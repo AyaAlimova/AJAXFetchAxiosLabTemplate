@@ -86,7 +86,7 @@ const API_KEY = "live_Q5hqhaXUDUK2zbR70EELarM0IJEPFoFNm7KTuHjRB6SFMaHhOO8OYxVIl7
 
 //4 Within this additional file, change all of your fetch() functions to Axios!
 
-export async function imagesAlternative(event) {
+export async function handleBreedSelect(event) {
   const breedId = event.target.value;
 
   if (!breedId) return; 
@@ -125,7 +125,7 @@ export async function imagesAlternative(event) {
   }
 }
 
-document.getElementById('breedSelect').addEventListener('change', imagesAlternative);
+document.getElementById('breedSelect').addEventListener('change', handleBreedSelect);
 
 
 /* * 5. Add axios interceptors to log the time between request and response to the console.
@@ -200,8 +200,42 @@ function updateProgressBar(percentage){
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 export async function favourite(imgId) {
-  // your code here
+  try{
+    const response = await axios.get('https://api.thecatapi.com/v1/favourites',{
+        headers:{
+         'x-api-key': API_KEY
+        }
+    }); 
+
+    const favourites = response.data;
+    const favourite = favourites.find(fav => fav.image_id === imgId);
+
+    if(favourite){
+      await axios.delete(`https://api.thecatapi.com/v1/favourites/${favourite.id}`, {
+        headers:{
+          'x-api-key': API_KEY
+        }
+    });
+        console.log(`Image ${imgId} has been unfavourited.`);
+  }
+  
+  else{
+    await axios.post('https://api.thecatapi.com/v1/favourites', {
+      image_id: imgId
+    }, {
+      headers:{
+         'x-api-key': API_KEY
+        }
+    });
+    console.log(`Image ${imgId} has been favourited`);
+  }
+  }
+  catch(error){
+    console.error('Error adding favourite:', error)
+  }
+
 }
+
 
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
@@ -212,11 +246,24 @@ export async function favourite(imgId) {
  *    If that isn't in its own function, maybe it should be so you don't have to
  *    repeat yourself in this section.
  */
+  export async function getFavourites() {
+    try{
+      const response = await axios.get('https://api.thecatapi.com/v1/favourites', {
+        headers:{
+          'x-api-key': API_KEY
+        }
+      });
+      const favourites = response.data;
+      console.log('Your favourites:', favourites);
+      return favourites;
+    }
+    catch(error){
+      console.error('Error getting favourites', error)
+      return[];
+    }
+  }
+  getFavouritesBtn.addEventListener('click', async ()=>{
+    clear();
+    const favourites = await getFavourites();
+  }) 
 
-/**
- * 10. Test your site, thoroughly!
- * - What happens when you try to load the Malayan breed?
- *  - If this is working, good job! If not, look for the reason why and fix it!
- * - Test other breeds as well. Not every breed has the same data available, so
- *   your code should account for this.
- */
